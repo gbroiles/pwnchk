@@ -7,23 +7,27 @@ import pprint
 import requests
 from time import sleep
 
+
 def create_parse():
-    parser = argparse.ArgumentParser(description="Have I Been Pwned bulk addess checker")
-    parser.add_argument("filename", help="file(s) with email addresses to scan", nargs="+")
+    parser = argparse.ArgumentParser(
+        description="Have I Been Pwned bulk addess checker"
+    )
+    parser.add_argument(
+        "filename", help="file(s) with email addresses to scan", nargs="+"
+    )
     return parser
+
 
 def checkit(filename, apikey):
     url = "https://haveibeenpwned.com/api/v3/breachedaccount/"
-    headers = {"hibp-api-key": apikey, 
-            'user-agent': 'HIBP bulk checker / 0.1'
-            }
+    headers = {"hibp-api-key": apikey, "user-agent": "HIBP bulk checker / 0.1"}
 
-    with open(filename,"r") as f:
+    with open(filename, "r") as f:
         addrs = f.read().splitlines()
 
     for addr in addrs:
-        target = url + addr# + "?truncateResponse=false"
-        print(addr, end=' ')
+        target = url + addr  # + "?truncateResponse=false"
+        print(addr, end=" ")
         response = requests.get(target, headers=headers)
         if response.status_code == 200:
             print("breach(es) found")
@@ -31,8 +35,9 @@ def checkit(filename, apikey):
             print("no breaches found")
         else:
             pprint.pprint(response.json())
-#        print()
+        #        print()
         sleep(1.6)
+
 
 def start():
     parser = create_parse()
@@ -46,6 +51,7 @@ def start():
 
     for item in args.filename:
         checkit(item, apikey)
+
 
 if __name__ == "__main__":
     start()
