@@ -5,6 +5,7 @@ import os
 import sys
 import pprint
 import requests
+from time import sleep
 
 def create_parse():
     parser = argparse.ArgumentParser(description="Have I Been Pwned bulk addess checker")
@@ -22,13 +23,16 @@ def checkit(filename, apikey):
 
     for addr in addrs:
         target = url + addr# + "?truncateResponse=false"
-#        print(target)
-#        print(headers)
-        print(addr)
+        print(addr, end=' ')
         response = requests.get(target, headers=headers)
-        print(response.status_code)
-        pprint.pprint(response.json())
-        print()
+        if response.status_code == 200:
+            print("breach(es) found")
+        elif response.status_code == 404:
+            print("no breaches found")
+        else:
+            pprint.pprint(response.json())
+#        print()
+        sleep(1.6)
 
 def start():
     parser = create_parse()
