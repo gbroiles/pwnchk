@@ -22,10 +22,13 @@ def checkit(filename, apikey):
 
     for addr in addrs:
         target = url + addr# + "?truncateResponse=false"
-        print(target)
-        print(headers)
+#        print(target)
+#        print(headers)
+        print(addr)
         response = requests.get(target, headers=headers)
+        print(response.status_code)
         pprint.pprint(response.json())
+        print()
 
 def start():
     parser = create_parse()
