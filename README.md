@@ -11,7 +11,7 @@ to the command line which results in output only at the end of the run as lists 
 
 Usage example:
 
-    pwnchk text.txt
+    pwnchk emails.txt
 
 Password scanning does not require an API key and uses https://github.com/lionheart/pwnedpasswords for access.   
 
