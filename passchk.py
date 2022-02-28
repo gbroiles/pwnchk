@@ -2,6 +2,7 @@
 # pylint: disable=invalid-name,missing-module-docstring,missing-function-docstring
 import argparse
 import pwnedpasswords
+from rich.progress import track
 
 found = []
 notfound = []
@@ -21,7 +22,7 @@ def checkit(filename):
     global table
     with open(filename, "r") as f:
         pws = f.read().splitlines()
-    for pw in pws:
+    for pw in track(pws, description="Processing.."):
         if not table:
             print(pw, end=" ")
         r = pwnedpasswords.check(pw)

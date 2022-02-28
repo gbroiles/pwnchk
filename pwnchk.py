@@ -6,6 +6,7 @@ import sys
 import pprint
 import requests
 from time import sleep
+from rich.progress import track
 
 table = False
 found = []
@@ -33,7 +34,7 @@ def checkit(filename, apikey):
     with open(filename, "r") as f:
         addrs = f.read().splitlines()
 
-    for addr in addrs:
+    for addr in track(addrs, description="Processing.."):
         target = url + addr
         if not table:
             print(addr, end=" ")
