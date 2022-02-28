@@ -7,11 +7,16 @@ import pprint
 import requests
 from time import sleep
 
+table = False
+found = []
+notfound = []
+
 
 def create_parse():
     parser = argparse.ArgumentParser(
         description="Have I Been Pwned bulk addess checker"
     )
+    parser.add_argument("--table", help="output result as tables", action="store_true")
     parser.add_argument(
         "filename", help="file(s) with email addresses to scan", nargs="+"
     )
@@ -19,6 +24,9 @@ def create_parse():
 
 
 def checkit(filename, apikey):
+    global table
+    global found
+    global notfound
     url = "https://haveibeenpwned.com/api/v3/breachedaccount/"
     headers = {"hibp-api-key": apikey, "user-agent": "HIBP bulk checker / 0.1"}
 
@@ -26,20 +34,26 @@ def checkit(filename, apikey):
         addrs = f.read().splitlines()
 
     for addr in addrs:
-        target = url + addr  # + "?truncateResponse=false"
-        print(addr, end=" ")
+        target = url + addr
+        if not table:
+            print(addr, end=" ")
         response = requests.get(target, headers=headers)
         if response.status_code == 200:
-            print("breach(es) found")
+            found.append(addr)
+            if not table:
+                print("breach(es) found")
         elif response.status_code == 404:
-            print("no breaches found")
+            notfound.append(addr)
+            if not table:
+                print("no breaches found")
         else:
-            pprint.pprint(response.json())
-        #        print()
+            if not table:
+                pprint.pprint(response.json())
         sleep(1.6)
 
 
 def start():
+    global table
     parser = create_parse()
     args = parser.parse_args()
     try:
@@ -49,8 +63,18 @@ def start():
         print("See https://haveibeenpwned.com/API/Key to purchase a key.")
         sys.exit(1)
 
+    table = args.table
+
     for item in args.filename:
         checkit(item, apikey)
+
+    if table:
+        print("Found ", len(found), " ----------------------------------------")
+        for i in found:
+            print(i)
+        print("Missing ", len(notfound), " ----------------------------------------")
+        for i in notfound:
+            print(i)
 
 
 if __name__ == "__main__":
