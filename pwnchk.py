@@ -31,6 +31,8 @@ def checkit(filename, apikey):
     url = "https://haveibeenpwned.com/api/v3/breachedaccount/"
     headers = {"hibp-api-key": apikey, "user-agent": "HIBP bulk checker / 0.1"}
 
+    session = requests.Session()
+
     with open(filename, "r") as f:
         addrs = f.read().splitlines()
 
@@ -38,7 +40,7 @@ def checkit(filename, apikey):
         target = url + addr
         if not table:
             print(addr, end=" ")
-        response = requests.get(target, headers=headers)
+        response = session.get(target, headers=headers)
         if response.status_code == 200:
             found.append(addr)
             if not table:
