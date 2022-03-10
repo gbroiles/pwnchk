@@ -9,6 +9,9 @@ Output is normally provided as the programs run. Optionall, the `--table` parame
 to the command line which results in output only at the end of the run as lists of "found" and
 "not found" entries. 
 
+Lists of passwords and email addresses are sorted and duplicate entries are removed (across all files)
+before processing to improve speed and reduce load on HIBP resources. 
+
 Usage example:
 
     pwnchk emails.txt
