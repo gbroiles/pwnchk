@@ -11,6 +11,7 @@ from rich.progress import track
 table = False
 found = []
 notfound = []
+emails = []
 
 
 def create_parse():
@@ -23,8 +24,14 @@ def create_parse():
     )
     return parser
 
+def load_list(emails, filename):
+    with open(filename, "r") as f:
+        addrs = f.read().splitlines()
 
-def checkit(filename, apikey):
+    for entry in addrs:
+        emails.append(entry)
+
+def checkit(addrs, apikey):
     global table
     global found
     global notfound
@@ -32,9 +39,6 @@ def checkit(filename, apikey):
     headers = {"hibp-api-key": apikey, "user-agent": "HIBP bulk checker / 0.1"}
 
     session = requests.Session()
-
-    with open(filename, "r") as f:
-        addrs = f.read().splitlines()
 
     for addr in track(addrs, description="Processing.."):
         target = url + addr
@@ -57,6 +61,7 @@ def checkit(filename, apikey):
 
 def start():
     global table
+    global emails
     parser = create_parse()
     args = parser.parse_args()
     try:
@@ -69,7 +74,11 @@ def start():
     table = args.table
 
     for item in args.filename:
-        checkit(item, apikey)
+        load_list(emails, item)
+
+    emails = list(set(emails)) # remove duplicates
+    emails.sort()
+    checkit(emails, apikey)
 
     if table:
         print("Found ", len(found), " ----------------------------------------")
