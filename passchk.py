@@ -7,6 +7,7 @@ from rich.progress import track
 found = []
 notfound = []
 table = False
+entries = []
 
 
 def create_parse():
@@ -18,10 +19,15 @@ def create_parse():
     return parser
 
 
-def checkit(filename):
-    global table
+def load_list(entries, filename):
     with open(filename, "r") as f:
-        pws = f.read().splitlines()
+        lines = f.read().splitlines()
+    for line in lines:
+        entries.append(line)
+
+
+def checkit(pws):
+    global table
     for pw in track(pws, description="Processing.."):
         if not table:
             print(pw, end=" ")
@@ -38,13 +44,19 @@ def checkit(filename):
 
 def start():
     global table
+    global entries
     parser = create_parse()
     args = parser.parse_args()
 
     table = args.table
 
     for item in args.filename:
-        checkit(item)
+        load_list(entries, item)
+
+    entries = list(set(entries))
+    entries.sort()
+
+    checkit(entries)
 
     if table:
         print("Found ", len(found), " ----------------------------------------")
