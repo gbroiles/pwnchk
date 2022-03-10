@@ -24,12 +24,14 @@ def create_parse():
     )
     return parser
 
+
 def load_list(emails, filename):
     with open(filename, "r") as f:
         addrs = f.read().splitlines()
 
     for entry in addrs:
         emails.append(entry)
+
 
 def checkit(addrs, apikey):
     global table
@@ -76,7 +78,7 @@ def start():
     for item in args.filename:
         load_list(emails, item)
 
-    emails = list(set(emails)) # remove duplicates
+    emails = list(set(emails))  # remove duplicates
     emails.sort()
     checkit(emails, apikey)
 
